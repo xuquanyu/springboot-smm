@@ -1,0 +1,39 @@
+spring:
+  #数据库连接配置
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/testdb?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
+    username: root
+    password: admin
+
+  # rabbitMq 配置
+  application:
+    name: rabbitMqProducer
+  rabbitmq:
+    host: localhost
+    port: 5672
+    #该用户不允许远程IP登录
+    username: guest
+    password: guest
+    virtual-host: /LeslieHost
+
+pagehelper:
+  helper-dialect: mysql
+  params: count=countSql
+  reasonable: true
+  support-methods-arguments: true
+
+  #在log日志中打印
+logging:
+  level:
+    com.example.demo.mapper: debug
+
+  #在控制台上打印sql语句(spring boot集成mybatis的方式打印sql)
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #mybatis
+#  mybatis:
+#    type:
+#      aliases:
+#        package: com.example.demo.entity
