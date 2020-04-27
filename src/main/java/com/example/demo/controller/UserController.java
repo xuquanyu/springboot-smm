@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RequestMapping("/demo")
+@RequestMapping("demo")
 @RestController
 public class UserController {
 

@@ -1,5 +1,8 @@
 server:
   port: 8080
+  servlet:
+    context-path: /
+
 spring:
   #数据库连接配置
   datasource:
@@ -9,8 +12,6 @@ spring:
     password: admin
 
   # rabbitMq 配置
-  application:
-    name: rabbitMqProducer
   rabbitmq:
     host: localhost
     port: 5672
