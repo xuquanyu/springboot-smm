@@ -4,15 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -32,20 +29,20 @@ public class DataConfig {
 
     @Bean(name = "sqlSessionFactory")
     @ConditionalOnMissingBean(SqlSessionFactoryBean.class)
-    public SqlSessionFactoryBean createSqlSessionFactory(DataSource dataSource) throws Exception {
+    public SqlSessionFactoryBean createSqlSessionFactory(DataSource dataSource,
+                                                         ApplicationContext applicationContext) throws Exception {
         log.info("into createSqlSessionFactory method");
         try {
-            SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            sqlSessionFactoryBean.setDataSource(dataSource);
-            sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:mapper/*.xml"));
-//            sqlSessionFactoryBean.setConfigLocation(resolver.getResource("classpath:mybatis-config.xml"));
-            sqlSessionFactoryBean.setTypeAliasesPackage("com.example.demo.entity");
-            return sqlSessionFactoryBean;
+            SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+            sessionFactory.setDataSource(dataSource);
+            sessionFactory.setTypeAliasesPackage("com.example.demo.entity");
+            sessionFactory.setMapperLocations(applicationContext.getResources("classpath*:/mapper/*.xml"));
+            sessionFactory.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
+            return sessionFactory;
 
         } catch (IOException e) {
             log.error(
-                    "Error happens when getting sqlSessionFactory config files.{}",e );
+                    "Error happens when getting sqlSessionFactory config files.{}", e);
         }
         return null;
     }
@@ -73,26 +70,4 @@ public class DataConfig {
         return new DataSourceTransactionManager(dataSource);
     }
 
-
-//    @Bean
-//    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ApplicationContext applicationContext) throws Exception {
-//        SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-//        sessionFactory.setDataSource(dataSource);
-//        sessionFactory.setTypeAliasesPackage("com.example.demo.entity");
-////        sessionFactory.setMapperLocations(applicationContext.getResources("classpath*:/mapper/*.xml"));
-//        sessionFactory.setMapperLocations(applicationContext.getResources("classpath:mapper/*.xml"));
-//        sessionFactory.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
-//        return sessionFactory.getObject();
-//    }
-//
-//
-//    /**
-//     * 事务
-//     */
-//    @Bean
-//    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
-//        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
-//        dataSourceTransactionManager.setDataSource(dataSource);
-//        return dataSourceTransactionManager;
-//    }
 }
